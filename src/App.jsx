@@ -1,11 +1,10 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
-import img from './assets/IMG_5154.jpeg'
+import "./App.css";
+import Header from "./components/Header.jsx";
+import Navbar from "./components/Navbar.jsx";
+import StudentCard from "./components/StudentCard.jsx";
+import Footer from "./components/Footer.jsx";
+import studentImage from "./assets/IMG_5154.jpeg";
 
-import Student from './Student.jsx'
 const etudiants = [
   {
     id: 1,
@@ -17,7 +16,7 @@ const etudiants = [
     anneeEtude: "2ème année",
     groupe: "GLSI 2",
     ville: "Mahdia",
-    image: img,
+    image: studentImage,
   },
   {
     id: 2,
@@ -29,7 +28,7 @@ const etudiants = [
     anneeEtude: "2ème année",
     groupe: "GLSI 1",
     ville: "Sousse",
-    image: img,
+     image: studentImage,
   },
   {
     id: 3,
@@ -40,30 +39,36 @@ const etudiants = [
     filiere: "Génie Logiciel et Systèmes d'Information",
     anneeEtude: "2ème année",
     groupe: "GLSI 2",
-    ville: "Mahdia",
-    image: img,
+    image: studentImage,
   },
 ]
 
 function App() {
   return (
-    <div className="container">
-      {etudiants.map((etudiant) => (
-        <Student
-          key={etudiant.id}
-          prenom={etudiant.prenom}
-          nom={etudiant.nom}
-          email={etudiant.email}
-          telephone={etudiant.telephone}
-          filiere={etudiant.filiere}
-          anneeEtude={etudiant.anneeEtude}
-          groupe={etudiant.groupe}
-          ville={etudiant.ville}
-          image={etudiant.image}
-        />
-      ))}
-    </div>
-  )
+    <>
+      <Header />
+      <Navbar />
+
+      <div className="container">
+        {etudiants.map((etudiant) => (
+          <StudentCard
+            key={etudiant.id}
+            prenom={etudiant.prenom}
+            nom={etudiant.nom}
+            email={etudiant.email}
+            telephone={etudiant.telephone}
+            filiere={etudiant.filiere}
+            anneeEtude={etudiant.anneeEtude}
+            groupe={etudiant.groupe}
+            ville={etudiant.ville}
+            image={etudiant.image}
+          />
+        ))}
+      </div>
+
+      <footer />
+    </>
+  );
 }
 
-export default App
+export default App;
