@@ -1,11 +1,13 @@
 import "./App.css";
+import { useState } from "react";
 import Header from "./components/Header.jsx";
 import Navbar from "./components/Navbar.jsx";
 import StudentCard from "./components/StudentCard.jsx";
 import Footer from "./components/Footer.jsx";
 import studentImage from "./assets/IMG_5154.jpeg";
 
-const etudiants = [
+// données initiales (barra mel App, ykounou valeur de départ mte3 l'état)
+const etudiantsInitiaux = [
   {
     id: 1,
     prenom: "khouloud",
@@ -28,7 +30,7 @@ const etudiants = [
     anneeEtude: "2ème année",
     groupe: "GLSI 1",
     ville: "Sousse",
-     image: studentImage,
+    image: studentImage,
   },
   {
     id: 3,
@@ -41,18 +43,74 @@ const etudiants = [
     groupe: "GLSI 2",
     image: studentImage,
   },
-]
+];
 
 function App() {
+  // états de visibiliter
+  const [etudiants, setEtudiants] = useState(etudiantsInitiaux);
+  const [recherche, setRecherche] = useState("");
+
+  // AJOUTER
+  function ajouterEtudiant(){
+    const nouvelEtudiant ={
+      nom :" sassi",
+      prenom: "tesnim",
+      email:"tesnim@gmail.com",
+      telephone:"+216 5522441",
+      filiere: "genie logiciel",
+      anneeEtude:"2eme année",
+      groupe:"GLSI b2",
+      ville:"nabeul",
+      image: studentImage,
+    } ;
+    setEtudiants([...etudiants, nouvelEtudiant]);
+  }
+  // SUPPRIMER
+  function supprimerEtudiant(id) {
+    setEtudiants(etudiants.filter((e) => e.id !== id));
+  }
+
+  // MODIFIER (le prénom)
+  function modifierEtudiant(id) {
+    const nouveauPrenom = prompt("Nouveau prénom :");
+    if (!nouveauPrenom || nouveauPrenom.trim() === "") return;
+
+    setEtudiants(
+      etudiants.map((e) =>
+        e.id === id ? { ...e, prenom: nouveauPrenom.trim() } : e
+      )
+    );
+  }
+
+  // FILTRER
+  const texte = recherche.toLowerCase();
+  const etudiantsFiltres = etudiants.filter(
+    (e) =>
+      e.nom.toLowerCase().includes(texte) ||
+      e.prenom.toLowerCase().includes(texte) ||
+      e.filiere.toLowerCase().includes(texte)
+  );
+
   return (
     <>
       <Header />
       <Navbar />
 
+      <div className="actions">
+        <button onClick={ajouterEtudiant}>+ Ajouter un étudiant</button>
+        <input
+          type="text"
+          placeholder="Rechercher (nom, prénom, filière)..."
+          value={recherche}
+          onChange={(event) => setRecherche(event.target.value)}
+        />
+      </div>
+
       <div className="container">
-        {etudiants.map((etudiant) => (
+        {etudiantsFiltres.map((etudiant) => (
           <StudentCard
             key={etudiant.id}
+            id={etudiant.id}
             prenom={etudiant.prenom}
             nom={etudiant.nom}
             email={etudiant.email}
@@ -62,11 +120,13 @@ function App() {
             groupe={etudiant.groupe}
             ville={etudiant.ville}
             image={etudiant.image}
+            onSupprimer={supprimerEtudiant}
+            onModifier={modifierEtudiant}
           />
         ))}
       </div>
 
-      <footer />
+      <Footer />
     </>
   );
 }
