@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar.jsx";
 import StudentCard from "./components/StudentCard.jsx";
 import Footer from "./components/Footer.jsx";
 import studentImage from "./assets/IMG_5154.jpeg";
+import StudentForm from "./components/StudentForm.jsx";
 
 // données initiales (barra mel App, ykounou valeur de départ mte3 l'état)
 const etudiantsInitiaux = [
@@ -49,38 +50,43 @@ function App() {
   // états de visibiliter
   const [etudiants, setEtudiants] = useState(etudiantsInitiaux);
   const [recherche, setRecherche] = useState("");
-
-  // AJOUTER
-  function ajouterEtudiant(){
-    const nouvelEtudiant ={
-      nom :" sassi",
-      prenom: "tesnim",
-      email:"tesnim@gmail.com",
-      telephone:"+216 5522441",
-      filiere: "genie logiciel",
-      anneeEtude:"2eme année",
-      groupe:"GLSI b2",
-      ville:"nabeul",
-      image: studentImage,
-    } ;
-    setEtudiants([...etudiants, nouvelEtudiant]);
-  }
+  const [formVisible, setFormVisible] = useState(false);
+  const [etudiantAModifier, setEtudiantAModifier] = useState(null);
+ // AJOUTER
+function ajouterEtudiant(nouvelEtudiant) {
+  const etudiantAvecId = {
+    ...nouvelEtudiant,
+    id: Date.now(),
+  };
+  setEtudiants((anciensEtudiants) => [...anciensEtudiants, etudiantAvecId]);
+  setFormVisible(false);
+}
   // SUPPRIMER
-  function supprimerEtudiant(id) {
-    setEtudiants(etudiants.filter((e) => e.id !== id));
+ function supprimerEtudiant(id) {
+  setEtudiants(etudiants.filter((e) => e.id !== id));
+  if (etudiantAModifier && etudiantAModifier.id === id) {
+    setEtudiantAModifier(null);
+    setFormVisible(false);
   }
+}
 
-  // MODIFIER (le prénom)
-  function modifierEtudiant(id) {
-    const nouveauPrenom = prompt("Nouveau prénom :");
-    if (!nouveauPrenom || nouveauPrenom.trim() === "") return;
-
-    setEtudiants(
-      etudiants.map((e) =>
-        e.id === id ? { ...e, prenom: nouveauPrenom.trim() } : e
-      )
-    );
-  }
+  // MODIFIER
+function modifierEtudiant(id) {
+  const etudiant = etudiants.find((e) => e.id === id);
+  setEtudiantAModifier(etudiant);
+  setFormVisible(true);
+}
+function enregistrerModification(etudiantModifie) {
+  setEtudiants((anciensEtudiants) =>
+    anciensEtudiants.map((e) =>
+      e.id === etudiantAModifier.id
+        ? { ...etudiantModifie, id: e.id } 
+        : e
+    )
+  );
+  setEtudiantAModifier(null);
+  setFormVisible(false);
+}
 
   // FILTRER
   const texte = recherche.toLowerCase();
@@ -97,7 +103,11 @@ function App() {
       <Navbar />
 
       <div className="actions">
-        <button onClick={ajouterEtudiant}>+ Ajouter un étudiant</button>
+        <button onClick={() => {
+          setEtudiantAModifier(null);
+          setFormVisible(!formVisible);
+        }}
+      >+ Ajouter un étudiant</button>
         <input
           type="text"
           placeholder="Rechercher (nom, prénom, filière)..."
@@ -105,6 +115,15 @@ function App() {
           onChange={(event) => setRecherche(event.target.value)}
         />
       </div>
+      {formVisible && (
+      <StudentForm
+        key={etudiantAModifier ? etudiantAModifier.id : "nouveau"}
+        onAjouterEtudiant={ajouterEtudiant}
+        etudiantAModifier={etudiantAModifier}
+        onModifierEtudiant={enregistrerModification}
+          />
+    )}
+
 
       <div className="container">
         {etudiantsFiltres.map((etudiant) => (
